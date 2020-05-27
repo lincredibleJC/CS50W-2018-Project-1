@@ -7,6 +7,13 @@
 {% block content %}
 	<div class="container">
 		<h2>Homepage</h2>
+		{% if error %}
+			<p class="error"><strong>Error: </strong>{{ error }}</p>
+		{% endif %}
+		<form action="/search" method="GET">
+	    <input class="form-control" name="book" type="search" placeholder="Search books by title, author or isbn" >
+	    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+	  </form>
 	<div>
 {% endblock %}
 
