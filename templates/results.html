@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+  Results for 
+{% endblock %}
+
+{% block content %}
+	<div class="container">
+		<h1>Search Results: {{ num_books }} found</h1>
+		{% if num_books>0 %}
+			<ul>
+			{% for book in books %}
+				<li>{{ book.title }}, {{ book.author}}, {{ book.year }}, {{ book.isbn }}</li>
+			{% endfor %}
+			</ul>
+		{% else %}
+			<p>We don't seem to have the book you are looking for :(</p>
+		{% endif %}
+	</div>
+{% endblock %}
+
+
+

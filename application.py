@@ -80,4 +80,26 @@ def register():
 		return redirect(url_for('login')) # TODO: add message that registration is successful
 	else:
 		return render_template('register.html')
-	
+
+
+@app.route("/search")
+def search():
+	""" Get search results """
+	search_term = request.args.get("book")
+	search_term = search_term.strip()
+
+	if not search_term:
+		return render_template('index.html', error="search field cannot be empty")
+
+	query = "%" + request.args.get("book") + "%"
+
+	rows = db.execute("SELECT * FROM books WHERE \
+						isbn LIKE :query OR \
+						title LIKE :query OR \
+						author LIKE :query",
+						{"query": query})
+
+	num_books_found = rows.rowcount	
+
+	books = rows.fetchall()
+	return render_template("results.html", num_books=num_books_found, books=books)
