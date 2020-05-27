@@ -1,22 +1,22 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-  Login
+  Register
 {% endblock %}
 
 {% block content %}
 	<div class="container">
-		<h1>Please Login</h1>
+		<h1>Please Register</h1>
 		<br>
-		{% if error %}
-			<small class="text-danger">{{ error }}</small>
-		{% endif %}
 		<form action="" method="POST">
 			<input type="text" name="username" placeholder="username" value="{{ request.form.username }}">
 			<input type="password" name="password" placeholder="password" value="{{ request.form.password }}">
-			<input class="btn btn-default" type="submit" value="Login">
+			<input class="btn btn-default" type="submit" value="Register">
 		</form>
-		<small>If you don't have an account, click <a href="/register">here</a> to register.</small>
+		<small>If already have an account, click <a href="/login">here</a> to login.</small>
+		{% if error %}
+			<p class="error"><strong>Error: </strong>{{ error }}</p>
+		{% endif %}
 	</div>
 {% endblock %}
 
