@@ -43,7 +43,11 @@ def login():
 			username = request.form['username']
 			password = request.form['password']
 
-			user = db.execute("Select * FROM users WHERE username=:username" , {"username": username}).fetchone()
+			user = db.execute("SELECT * \
+								FROM users \
+								WHERE username = :username",
+								{"username": username}
+							).fetchone()
 
 			if user == None or not check_password_hash(user["password_hash"], password):
 				error = 'Either your username or password is wrong. Please try again.'
@@ -70,11 +74,19 @@ def register():
 		new_username = request.form['username']
 		new_password = request.form['password']
 
-		if db.execute("Select * from users WHERE username = :new_username", { "new_username": new_username}).rowcount > 0:
+		if db.execute("SELECT * \
+						FROM users \
+						WHERE username = :new_username",
+						{ "new_username": new_username}
+					).rowcount > 0:
 			error = "this username has been taken, please try another one"
 			return render_template('register.html', error=error)
 		else:
-			db.execute("INSERT INTO users (username, password_hash) VALUES (:username, :password_hash)", {"username": new_username, "password_hash": generate_password_hash(new_password)})
+			db.execute("INSERT INTO users (username, password_hash) \
+						VALUES (:username, :password_hash)",
+						{"username": new_username,
+						"password_hash": generate_password_hash(new_password)}
+					)
 			db.commit()
 
 		return redirect(url_for('login')) # TODO: add message that registration is successful
@@ -93,11 +105,12 @@ def search():
 
 	query = "%" + request.args.get("book") + "%"
 
-	rows = db.execute("SELECT * FROM books WHERE \
-						isbn LIKE :query OR \
-						title LIKE :query OR \
-						author LIKE :query",
-						{"query": query})
+	rows = db.execute("SELECT * FROM books \
+						WHERE isbn LIKE :query \
+						OR title LIKE :query \
+						OR author LIKE :query",
+						{"query": query}
+					)
 
 	num_books_found = rows.rowcount	
 
