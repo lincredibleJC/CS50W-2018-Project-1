@@ -115,4 +115,4 @@ def search():
 	num_books_found = rows.rowcount	
 
 	books = rows.fetchall()
-	return render_template("results.html", num_books=num_books_found, books=books)
+	return render_template("results.html", search_term=search_term, num_books=num_books_found, books=books)

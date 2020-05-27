@@ -1,12 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block title %}
-  Results for 
+  Results for {{ search_term }}
 {% endblock %}
 
 {% block content %}
 	<div class="container">
-		<h1>Search Results: {{ num_books }} found</h1>
+		<h1>Search Results for {{ search_term }}: {{ num_books }} found</h1>
 		{% if num_books>0 %}
 			<ul>
 			{% for book in books %}
