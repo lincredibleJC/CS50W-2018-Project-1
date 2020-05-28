@@ -5,15 +5,17 @@
 {% endblock %}
 
 {% block content %}
-	<div class="container">
+	<div class="container p-3 text-center">
 		<h2>Homepage</h2>
-		{% if error %}
-			<p class="error"><strong>Error: </strong>{{ error }}</p>
-		{% endif %}
-		<form action="/search" method="GET">
-	    <input class="form-control" name="book" type="search" placeholder="Search books by title, author or isbn" >
-	    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-	  </form>
+			<form action="/search" method="GET">
+				<div class="form-group">
+					{% if error %}
+						<p class="error"><strong>Error: </strong>{{ error }}</p>
+					{% endif %}
+		    	<input class="form-control" name="book" type="search" placeholder="Search books by title, author or isbn">
+		  	</div>
+		    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+		  </form>
 	<div>
 {% endblock %}
 

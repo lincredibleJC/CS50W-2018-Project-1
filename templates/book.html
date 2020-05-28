@@ -30,11 +30,11 @@
   <hr>
   <!-- Review Form -->
   <div class="container justify-content-center">
-  	<h2>User Reviews</h2>
-  	<h3>Add a review!</h3>
+  	<h2 class="text-center">User Reviews</h2>
+  	<h3 class="text-center">Add a review!</h3>
   	<form action="" method="POST">
 		  <div class="form-group">
-		    <label for="rating">Rate this book</label>
+		    <label for="rating">Rate this book out of 5</label>
 		    <select class="form-control" name="rating" id="rating">
 		      <option>1</option>
 		      <option>2</option>
@@ -53,15 +53,14 @@
   <hr>
   <!-- Existing reviews -->
 	<div class="container">
-		<h2>Reviews others have left</h2>
+		<h2 class="text-center">Book Reviews</h2>
 		<ul class="list-group">
 		{% if reviews %}
 			{% for review in reviews %}
     		<li href="#" class="list-group-item flex-column align-items-start">
 			    <div class="d-flex w-100 justify-content-between">
-			      <h5 class="mb-1">{{ review.username }}</h5>
+			      <h5 class="mb-1">{{ review.username.capitalize() }} says:</h5>
 			      <small>{{ review.rating }} Stars</small>
-			      <small>3 days ago</small>
 			    </div>
 			    <p class="mb-1">{{ review.comment }}</p>
 			  </li>
