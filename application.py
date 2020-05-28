@@ -36,10 +36,9 @@ def login():
 	""" Login users in """
 
 	if not session.get("username") is None:
-		error = "You are already logged in"
+		flash('You are already logged in', 'warning')
 		return redirect(url_for("index"))
 	else:
-		error = None
 		if request.method == 'POST':
 			username = request.form['username']
 			password = request.form['password']
@@ -51,8 +50,8 @@ def login():
 							).fetchone()
 
 			if user == None or not check_password_hash(user["password_hash"], password):
-				error = 'Either your username or password is wrong. Please try again.'
-				return render_template('login.html', error=error)
+				flash('Either your username or password is wrong. Please try again.', 'danger')
+				return render_template('login.html')
 			else:
 				flash('You have successfully logged in!', 'success')
 				session['username'] = username
@@ -82,8 +81,8 @@ def register():
 						WHERE username = :new_username",
 						{ "new_username": new_username}
 					).rowcount > 0:
-			error = "this username has been taken, please try another one"
-			return render_template('register.html', error=error)
+			flash('this username has been taken, please try another one', 'danger')
+			return render_template('register.html')
 		else:
 			db.execute("INSERT INTO users (username, password_hash) \
 						VALUES (:username, :password_hash)",
@@ -108,7 +107,8 @@ def search():
 	search_term = search_term.strip()
 
 	if not search_term:
-		return render_template('index.html', error="search field cannot be empty")
+		flash('search field cannot be empty', 'danger')
+		return render_template('index.html')
 
 	query = "%" + request.args.get("book") + "%"
 
