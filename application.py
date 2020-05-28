@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -170,3 +170,32 @@ def book(isbn):
 
 		# return the information, ratings and reviews of the selected book
 		return render_template("book.html", book=book, reviews=reviews, goodreads_review_statistics=goodreads_review_statistics)
+
+@app.route("/api/<string:isbn>", methods=['GET'])
+def api(isbn):
+	""" API access for all users to get book details by isbn """
+	
+	# check if the book exists in our database
+	rows = db.execute('SELECT title, author, year, isbn \
+						FROM books \
+						WHERE isbn = :isbn',
+						{"isbn": isbn}
+					)
+
+	if rows.rowcount > 0:
+		row = rows.fetchone();
+
+		# get review statistics from goodreads
+		key = os.getenv("GOODREADS_KEY")
+		json_response = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn}).json()
+		goodreads_review_statistics = json_response["books"][0]
+
+		return jsonify(title=row.title,
+						author=row.author,
+						year=row.year,
+						isbn=row.isbn,
+						review_count=goodreads_review_statistics["work_ratings_count"],
+						average_score=float(goodreads_review_statistics["average_rating"])
+					)
+	else:
+		return jsonify(code=404,message="We do not have a book with ISBN number " + isbn + ".")
