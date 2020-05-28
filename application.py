@@ -98,6 +98,10 @@ def register():
 @app.route("/search")
 def search():
 	""" Get search results """
+
+	if session.get("username") is None:
+		return redirect(url_for("login"))
+
 	search_term = request.args.get("book")
 	search_term = search_term.strip()
 
@@ -120,6 +124,9 @@ def search():
 
 @app.route("/books/<string:isbn>", methods=['GET','POST'])
 def book(isbn):
+
+	if session.get("username") is None:
+		return redirect(url_for("login"))
 
 	if request.method == "POST":
 		# check for existing reviews by current user
