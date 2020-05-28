@@ -121,8 +121,39 @@ def search():
 @app.route("/books/<string:isbn>", methods=['GET','POST'])
 def book(isbn):
 
+	if request.method == "POST":
+		# check for existing reviews by current user
+		username = session['username']
 
-	if request.method == "GET":
+		rows = db.execute("SELECT * \
+							FROM reviews \
+							WHERE username = :username \
+							AND isbn = :isbn",
+							{"username": username,
+							"isbn": isbn}
+						)
+
+		if rows.rowcount > 0:
+			error = "You have already submitted a review for this book"
+			return redirect("/book/" + isbn)
+
+		rating = request.form['rating']
+		print(rating)
+		comment = request.form['comment']
+		print(comment)
+
+		if comment:
+			db.execute("INSERT INTO reviews (username, isbn, rating, comment) \
+						VALUES (:username, :isbn, :rating, :comment)",
+						{"username": username,
+						"isbn": isbn,
+						"rating": rating,
+						"comment": comment}
+						)
+			db.commit()
+
+		return redirect(url_for('book', isbn=isbn))
+	else:
 		# find the book the user has selected
 		book = db.execute("SELECT * FROM Books WHERE isbn = :isbn LIMIT 1", {"isbn": isbn}).fetchall()
 		book = book[0]
@@ -139,7 +170,3 @@ def book(isbn):
 
 		# return the information, ratings and reviews of the selected book
 		return render_template("book.html", book=book, reviews=reviews, goodreads_review_statistics=goodreads_review_statistics)
-	else:
-		# post request to update review
-
-		return render_template("book.html")
