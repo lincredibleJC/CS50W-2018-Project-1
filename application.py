@@ -162,11 +162,20 @@ def book(isbn):
 		return redirect(url_for('book', isbn=isbn))
 	else:
 		# find the book the user has selected
-		book = db.execute("SELECT * FROM Books WHERE isbn = :isbn LIMIT 1", {"isbn": isbn}).fetchall()
+		book = db.execute("SELECT * \
+							FROM Books \
+							WHERE isbn = :isbn \
+							LIMIT 1",
+							{"isbn": isbn}
+						).fetchall()
 		book = book[0]
 
 		# find all ratings and reviews for the selected book
-		reviews = db.execute("SELECT username, comment, rating FROM reviews WHERE isbn = :isbn", {'isbn': isbn}).fetchall()
+		reviews = db.execute("SELECT username, comment, rating \
+								FROM reviews \
+								WHERE isbn = :isbn",
+								{'isbn': isbn}
+							).fetchall()
 
 		# Read API key from env variable
 		key = os.getenv("GOODREADS_KEY")
