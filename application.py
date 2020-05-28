@@ -1,4 +1,5 @@
 import os
+import requests
 
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
@@ -116,3 +117,29 @@ def search():
 
 	books = rows.fetchall()
 	return render_template("results.html", search_term=search_term, num_books=num_books_found, books=books)
+
+@app.route("/books/<string:isbn>", methods=['GET','POST'])
+def book(isbn):
+
+
+	if request.method == "GET":
+		# find the book the user has selected
+		book = db.execute("SELECT * FROM Books WHERE isbn = :isbn LIMIT 1", {"isbn": isbn}).fetchall()
+		book = book[0]
+
+		# find all ratings and reviews for the selected book
+		reviews = db.execute("SELECT username, comment, rating FROM reviews WHERE isbn = :isbn", {'isbn': isbn}).fetchall()
+
+		# Read API key from env variable
+		key = os.getenv("GOODREADS_KEY")
+
+		# Query the api with key and ISBN as parameters
+		json_response = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": key, "isbns": isbn}).json()
+		goodreads_review_statistics = json_response["books"][0]
+
+		# return the information, ratings and reviews of the selected book
+		return render_template("book.html", book=book, reviews=reviews, goodreads_review_statistics=goodreads_review_statistics)
+	else:
+		# post request to update review
+
+		return render_template("book.html")
