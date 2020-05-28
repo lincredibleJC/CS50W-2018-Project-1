@@ -1,7 +1,7 @@
 import os
 import requests
 
-from flask import Flask, session, render_template, request, redirect, url_for, jsonify
+from flask import Flask, session, render_template, request, redirect, url_for, jsonify, flash
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -54,6 +54,7 @@ def login():
 				error = 'Either your username or password is wrong. Please try again.'
 				return render_template('login.html', error=error)
 			else:
+				flash('You have successfully logged in!', 'success')
 				session['username'] = username
 				return redirect(url_for('index'))
 		else:
@@ -65,6 +66,7 @@ def logout():
 	
 	# remove the username from the session if it is there
 	session.pop('username', None)
+	flash('You have logged out!', 'success')
 	return redirect(url_for('index'))
 
 @app.route("/register", methods=['GET','POST'])
@@ -141,8 +143,9 @@ def book(isbn):
 						)
 
 		if rows.rowcount > 0:
-			error = "You have already submitted a review for this book"
-			return redirect("/book/" + isbn)
+			flash('You have already submitted a review for this book', 'danger')
+			return redirect(url_for('book', isbn=isbn))
+
 
 		rating = request.form['rating']
 		print(rating)
@@ -159,6 +162,7 @@ def book(isbn):
 						)
 			db.commit()
 
+		flash('You have added a review!', 'success')
 		return redirect(url_for('book', isbn=isbn))
 	else:
 		# find the book the user has selected
